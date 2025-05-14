@@ -11,23 +11,34 @@ def solve_task_1():
         r = float(entry1_r.get())
         T0 = float(entry1_T0.get())
         T = float(entry1_T.get())
-        T_env = 0
 
         h = 20
         ε = 0.8
-        c = 880
-        σ = 5.67e-8
+        c = 900
+        σ = 5.57e-8
 
         A = 4 * np.pi * r**2
-        k = (h + 4 * ε * σ * T_env**3) * A / (m * c)
+        a = (h * A) / (m * c)
+        b = (ε * σ * A) / (m * c)
 
-        t_vals = np.linspace(0, 10000, 500)
-        T_vals = T_env + (T0 - T_env) * np.exp(-k * t_vals)
+        t_vals = np.linspace(0, 10000, 10000)
+        T_vals = (
+            -(b/a) + (1/T0**3 + b/a) * 2.718 ** (3 * a * t_vals)) ** (-1 / 3)
+
+        idx = np.argmax(T_vals <= T)
+
+        t_cross = t_vals[idx]
+        T_cross = T_vals[idx]
 
         plt.figure(figsize=(8, 5))
         plt.plot(t_vals, T_vals, label='Температура шара', color='orange')
         plt.axhline(
             T, color='gray', linestyle='--', label='Искомая температура'
+        )
+        plt.plot(t_cross, T_cross, 'ro')
+        plt.text(
+            t_cross, T_cross + 1,
+            f'({t_cross:.2f} c, {T_cross:.2f} K)', color='red'
         )
         plt.title('Задача 1')
         plt.xlabel('Время (с)')
@@ -46,12 +57,26 @@ def solve_task_2():
         P0 = float(entry2_P0.get())
         r = float(entry2_r.get())
         K = float(entry2_K.get())
+        t = float(entry2_t.get())
 
-        t_vals = np.linspace(0, 50, 500)
+        t_vals = np.linspace(0, 60, 6000)
         P_vals = K / (1 + ((K - P0) / P0) * np.exp(-r * t_vals))
+
+        idx = np.argmax(t_vals >= t)
+
+        t_cross = t_vals[idx]
+        T_cross = P_vals[idx]
 
         plt.figure(figsize=(8, 5))
         plt.plot(t_vals, P_vals, label='Популяция', color='green')
+        plt.axvline(
+            t, color='gray', linestyle='--', label='Временной интервал'
+        )
+        plt.plot(t_cross, T_cross, 'ro')
+        plt.text(
+            t_cross, T_cross + 1,
+            f'({t_cross:.2f} лет, {T_cross:.2f} т.о.)', color='red'
+        )
         plt.title('Задача 2')
         plt.xlabel('Время (лет)')
         plt.ylabel('Численность (тыс. особей)')
@@ -84,7 +109,8 @@ def solve_task_3():
         plt.figure(figsize=(8, 5))
         plt.plot(t_vals, model_vals, label='Модель (Бернулли)', color='blue')
         plt.scatter(
-            days, real_cases, color='red', label='Реальные данные', zorder=5
+            days, real_cases, color='red',
+            label='Реальные данные (Китай 2020)', zorder=5
         )
         plt.title('Задача 3')
         plt.xlabel('Дни с 15 января 2020')
@@ -150,6 +176,11 @@ tk.Label(frame2, text='K:').grid(row=0, column=5)
 entry2_K = tk.Entry(frame2, width=10)
 entry2_K.insert(0, '500')
 entry2_K.grid(row=0, column=6)
+
+tk.Label(frame2, text='t:').grid(row=0, column=7)
+entry2_t = tk.Entry(frame2, width=10)
+entry2_t.insert(0, '10')
+entry2_t.grid(row=0, column=8)
 
 # --- ЗАДАЧА 3 ---
 frame3 = tk.Frame(root, bd=2, relief=tk.GROOVE, padx=10, pady=10)
