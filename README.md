@@ -22,5 +22,5 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Авторы
+### Авторы
 Ilya Nizhelskiy (CTaPuH4) - https://github.com/CTaPuH4/
